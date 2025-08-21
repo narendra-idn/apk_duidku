@@ -1,6 +1,6 @@
 # Duidku
 
-A comprehensive personal finance tracking app built with Flutter. Track your income, expenses, financial goals, and generate detailed PDF reports.
+A comprehensive personal finance tracking app built with Flutter. Track your income, expenses.
 
 ## Features
 
@@ -10,17 +10,14 @@ A comprehensive personal finance tracking app built with Flutter. Track your inc
 - **Local Storage**: Hive database with migration-ready schema
 - **State Management**: Flutter Riverpod for reactive state management
 - **Material Design 3**: Modern UI with light and dark themes
-- **Navigation**: Bottom navigation with 5 main screens
+- **Navigation**: Bottom navigation with 3 main screens
 - **Monthly Dashboard**: Summary cards showing income, expenses, and net amount
 
 ### 🚧 Features In Development
 
-- **Transaction Management**: Add, edit, delete income and expense entries
+- **Transaction Management**: Add income and expense entries
 - **Categories**: Default and custom categories with icons and colors
 - **Financial Goals**: Goal creation, progress tracking, and linking to transactions
-- **Filtering & Search**: Filter by date range, category, type, and search functionality
-- **PDF Reports**: Export detailed financial reports with charts
-- **Charts**: Monthly trends and category breakdowns using fl_chart
 - **Recurring Transactions**: Daily, weekly, and monthly recurring entries
 - **Data Backup**: JSON export/import functionality
 
@@ -29,7 +26,6 @@ A comprehensive personal finance tracking app built with Flutter. Track your inc
 - **Flutter**: Latest stable version with null safety
 - **State Management**: flutter_riverpod
 - **Local Database**: Hive with code generation
-- **PDF Generation**: pdf package
 - **Charts**: fl_chart
 - **Date/Number Formatting**: intl
 - **Architecture**: Clean Architecture with Repository pattern
