@@ -7,6 +7,7 @@ import '../../domain/repositories/category_repository.dart';
 import '../models/category_model.dart';
 import '../models/transaction_model.dart';
 
+//update
 class CategoryRepositoryImpl implements CategoryRepository {
   late Box<CategoryModel> _categoryBox;
   late Box<TransactionModel> _transactionBox;
