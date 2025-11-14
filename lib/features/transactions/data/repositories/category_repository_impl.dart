@@ -18,9 +18,11 @@ class CategoryRepositoryImpl implements CategoryRepository {
     } else {
       throw Exception('Categories box is not open');
     }
-    
+
     if (Hive.isBoxOpen(AppConstants.hiveBoxTransactions)) {
-      _transactionBox = Hive.box<TransactionModel>(AppConstants.hiveBoxTransactions);
+      _transactionBox = Hive.box<TransactionModel>(
+        AppConstants.hiveBoxTransactions,
+      );
     } else {
       throw Exception('Transactions box is not open');
     }
@@ -40,8 +42,9 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<List<Category>> getCategoriesByType(String type) async {
-    final models = _categoryBox.values.where((model) => 
-        model.type == type || model.type == 'both').toList();
+    final models = _categoryBox.values
+        .where((model) => model.type == type || model.type == 'both')
+        .toList();
     return models.map((model) => model.toEntity()).toList();
   }
 
@@ -64,25 +67,33 @@ class CategoryRepositoryImpl implements CategoryRepository {
 
   @override
   Future<void> seedDefaultCategories() async {
-    await _categoryBox.clear();
+    if (_categoryBox.isNotEmpty) {
+      return;
+    }
 
     final now = DateTime.now();
-    
-    for (final categoryData in AppConstants.defaultCategories) {
+
+    for (int i = 0; i < AppConstants.defaultCategories.length; i++) {
+      final categoryData = AppConstants.defaultCategories[i];
+      final categoryName = categoryData['name'] as String;
+      final categoryType = categoryData['type'] as String;
+      final fixedId =
+          'default_${categoryType}_${categoryName.toLowerCase().replaceAll(' ', '_')}';
+
       final category = Category(
-        id: _uuid.v4(),
-        name: categoryData['name'] as String,
+        id: fixedId,
+        name: categoryName,
         icon: IconData(
           categoryData['icon'] as int,
           fontFamily: 'MaterialIcons',
         ),
         color: Color(categoryData['color'] as int),
-        type: categoryData['type'] as String,
+        type: categoryType,
         isDefault: true,
         createdAt: now,
         updatedAt: now,
       );
-      
+
       await addCategory(category);
     }
   }
@@ -90,7 +101,8 @@ class CategoryRepositoryImpl implements CategoryRepository {
   @override
   Future<bool> isCategoryInUse(String categoryId) async {
     final transactions = _transactionBox.values.toList();
-    return transactions.any((transaction) => 
-        transaction.categoryId == categoryId);
+    return transactions.any(
+      (transaction) => transaction.categoryId == categoryId,
+    );
   }
 }
