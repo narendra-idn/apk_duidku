@@ -1,11 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/category.dart';
 import '../providers/transaction_providers.dart';
+
+class ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  final NumberFormat _formatter = NumberFormat('#,###', 'id_ID');
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) {
+      return newValue;
+    }
+
+    String digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+
+    if (digitsOnly.isEmpty) {
+      return const TextEditingValue();
+    }
+
+    final number = int.tryParse(digitsOnly);
+    if (number == null) {
+      return oldValue;
+    }
+
+    final formattedText = _formatter.format(number);
+
+    int selectionIndex = formattedText.length;
+
+    return TextEditingValue(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: selectionIndex),
+    );
+  }
+}
 
 class AddTransactionScreen extends ConsumerStatefulWidget {
   final String? initialType;
@@ -39,6 +74,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     _amountController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+
+  double _getNumericValue(String formattedText) {
+    final digitsOnly = formattedText.replaceAll(RegExp(r'[^\d]'), '');
+    return double.tryParse(digitsOnly) ?? 0.0;
   }
 
   @override
@@ -117,29 +157,30 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               TextFormField(
                 controller: _amountController,
                 keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+                  decimal: false,
                 ),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                  FilteringTextInputFormatter.digitsOnly,
+                  ThousandsSeparatorInputFormatter(),
                 ],
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Masukkan jumlah',
                   prefixText: 'Rp ',
-                  helperText: 'Contoh: 150000 untuk Rp 150.000',
-                  border: const OutlineInputBorder(),
+                  helperText: 'Contoh: 1.000.000 untuk satu juta',
+                  border: OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Silakan masukkan jumlah';
                   }
-                  final amount = double.tryParse(value);
-                  if (amount == null || amount <= 0) {
+                  final amount = _getNumericValue(value);
+                  if (amount <= 0) {
                     return 'Silakan masukkan jumlah yang valid';
                   }
                   return null;
                 },
                 onChanged: (value) {
-                  final amount = double.tryParse(value) ?? 0.0;
+                  final amount = _getNumericValue(value);
                   formNotifier.updateAmount(amount);
                 },
               ),

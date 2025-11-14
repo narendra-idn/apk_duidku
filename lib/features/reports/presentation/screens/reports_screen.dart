@@ -41,7 +41,7 @@ class ReportsScreen extends ConsumerWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: totalBalance >= 2000000
+                      colors: totalBalance >= 5000000
                           ? [
                               AppTheme.incomeColor,
                               AppTheme.incomeColor.withOpacity(0.8),
@@ -117,7 +117,7 @@ class ReportsScreen extends ConsumerWidget {
                       const SizedBox(height: 8),
 
                       Text(
-                        totalBalance >= 2000000
+                        totalBalance >= 5000000
                             ? 'Keuangan Anda dalam kondisi sehat'
                             : 'Perhatikan pengeluaran Anda',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
